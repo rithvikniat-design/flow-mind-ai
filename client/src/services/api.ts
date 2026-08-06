@@ -1,9 +1,11 @@
 import axios from 'axios';
 
 // Create central Axios instance
-// Uses Vite proxy in development, defaults to relative url in production
+// Uses VITE_API_URL environment variable if set, falls back to relative /api
+const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
