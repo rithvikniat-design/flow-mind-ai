@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+**/node_modules/
+.pnpm-store/
+
+# Environment variables & secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+!*.env.example
+
+# Build & Compilation outputs
+dist/
+**/dist/
+build/
+**/build/
+out/
+**/out/
+.next/
+.cache/
+*.tsbuildinfo
+
+# Local Persistent Database & Data Stores
+server/data/*.json
+!server/data/.gitkeep
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs & Debugging
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+logs/
+*.log.*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE & Editor configs
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary testing / coverage
+coverage/
+.nyc_output/
+.wptache/
