@@ -8,7 +8,7 @@
     "build:client": "npm run build --prefix client",
     "build": "npm run build:server && npm run build:client",
     "postinstall": "npm install --prefix server && npm install --prefix client",
-    "start": "node --max-old-space-size=400 server/dist/index.js",
+    "start": "npm start --prefix server",
     "start:server": "npm start --prefix server",
     "start:client": "npm run preview --prefix client"
   }
