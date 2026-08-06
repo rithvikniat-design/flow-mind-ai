@@ -29,7 +29,8 @@ export const Signup: React.FC = () => {
       await signup({ name, email, password });
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed. Try using another email.');
+      const errMsg = err.response?.data?.error || (typeof err.response?.data === 'string' ? err.response.data : err.message) || 'Registration failed.';
+      setError(errMsg);
     } finally {
       setLoading(false);
     }

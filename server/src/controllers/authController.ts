@@ -27,7 +27,7 @@ export const signup = async (req: Request, res: Response) => {
         .from('users')
         .select('id')
         .eq('email', email)
-        .single();
+        .maybeSingle();
 
       if (existingUser) {
         return res.status(400).json({ error: 'User with this email already exists' });
@@ -43,15 +43,15 @@ export const signup = async (req: Request, res: Response) => {
           email,
           password_hash: passwordHash,
           name,
-          role,
+          role: role || 'user',
           created_at: new Date().toISOString(),
         })
         .select('id, email, name, role')
-        .single();
+        .maybeSingle();
 
       if (error || !newUser) {
         console.error('[Signup Database Error]:', error);
-        return res.status(500).json({ error: 'Failed to create user in database. Ensure the schema table is migrated.' });
+        return res.status(500).json({ error: error?.message || 'Failed to create user in database.' });
       }
 
       const token = generateToken(newUser.id, newUser.email);
@@ -108,7 +108,7 @@ export const login = async (req: Request, res: Response) => {
         .from('users')
         .select('*')
         .eq('email', email)
-        .single();
+        .maybeSingle();
 
       if (error || !user) {
         return res.status(400).json({ error: 'Invalid email or password' });
