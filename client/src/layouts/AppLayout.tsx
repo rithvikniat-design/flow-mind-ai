@@ -22,7 +22,8 @@ import {
   WifiOff,
   Bell,
   X,
-  Sparkles
+  Sparkles,
+  Menu
 } from 'lucide-react';
 
 interface AppLayoutProps {
@@ -157,14 +158,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  return (
-    <div className="min-h-screen flex bg-obsidian-bg text-slate-100 relative font-sans">
-      {/* Dynamic glow background spots for high tech telemetry */}
-      <div className="absolute top-20 left-10 w-96 h-96 glow-bg-indigo pointer-events-none"></div>
-      <div className="absolute bottom-20 right-10 w-[500px] h-[500px] glow-bg-pink pointer-events-none"></div>
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-      {/* Sidebar Navigation */}
-      <aside className="w-64 obsidian-card border-r border-obsidian-border bg-obsidian-card flex flex-col z-20 sticky top-0 h-screen shrink-0">
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  return (
+    <div className="min-h-screen flex bg-obsidian-bg text-slate-100 relative font-sans overflow-x-hidden">
+      {/* Dynamic glow background spots for high tech telemetry */}
+      <div className="absolute top-20 left-10 w-72 sm:w-96 h-72 sm:h-96 glow-bg-indigo pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] glow-bg-pink pointer-events-none"></div>
+
+      {/* Desktop Sidebar Navigation */}
+      <aside className="hidden lg:flex w-64 obsidian-card border-r border-obsidian-border bg-obsidian-card flex-col z-20 sticky top-0 h-screen shrink-0">
         <div className="p-5 border-b border-obsidian-border flex items-center space-x-3">
           <div className="w-9 h-9 rounded-sharp bg-royal-500 flex items-center justify-center font-bold text-lg shadow-md shadow-royal-500/20 text-white">
             ⚡
@@ -243,21 +251,101 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </div>
       </aside>
 
+      {/* Mobile Slide-Out Drawer Navigation Overlay */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          <div
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <aside className="relative w-72 max-w-[80vw] obsidian-card border-r border-obsidian-border bg-obsidian-card flex flex-col z-50 h-full">
+            <div className="p-4 border-b border-obsidian-border flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-sharp bg-royal-500 flex items-center justify-center font-bold text-base text-white">
+                  ⚡
+                </div>
+                <h1 className="font-extrabold text-sm text-white">FlowMind OS</h1>
+              </div>
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 text-slate-400 hover:text-white rounded-sharp"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Mobile User Card */}
+            <div className="p-3 mx-3 mt-3 rounded-sharp bg-obsidian-bg border border-obsidian-border flex items-center space-x-3">
+              <div className="w-7 h-7 rounded-sharp bg-royal-500 flex items-center justify-center font-bold text-xs text-white">
+                {user?.name?.[0] || 'U'}
+              </div>
+              <div className="overflow-hidden">
+                <p className="text-xs font-bold truncate text-white">{user?.name || 'Administrator'}</p>
+                <p className="text-[10px] font-mono text-slate-400 truncate">{user?.email || 'admin@flowmind.ai'}</p>
+              </div>
+            </div>
+
+            <nav className="flex-1 px-3 py-3 space-y-1 overflow-y-auto">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center space-x-3 px-3.5 py-3 rounded-sharp text-xs font-semibold transition-all ${
+                      isActive
+                        ? 'bg-royal-500 text-white shadow-md shadow-royal-500/20'
+                        : 'text-slate-400 hover:bg-obsidian-hover hover:text-white'
+                    }`}
+                  >
+                    <Icon size={16} />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="p-4 border-t border-obsidian-border">
+              <button
+                onClick={logout}
+                className="flex items-center space-x-2.5 w-full px-3.5 py-2.5 rounded-sharp text-xs font-semibold text-slate-400 hover:bg-rose-950/30 hover:text-rose-400 transition-all"
+              >
+                <LogOut size={16} />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
+
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Header Bar */}
-        <header className="h-16 border-b border-obsidian-border px-8 flex items-center justify-between sticky top-0 backdrop-blur-md bg-obsidian-bg/90 z-10">
-          {/* Command Palette Trigger Input */}
-          <div
-            onClick={() => setShowPalette(true)}
-            className="flex items-center space-x-2.5 px-3 py-1.5 rounded-sharp bg-obsidian-card border border-obsidian-border text-xs text-slate-400 cursor-pointer w-72 hover:border-royal-500 transition-all font-mono"
-          >
-            <Search size={14} className="text-slate-400" />
-            <span>Search or command (Ctrl+K)...</span>
+        {/* Responsive Header Bar */}
+        <header className="h-16 border-b border-obsidian-border px-4 sm:px-8 flex items-center justify-between sticky top-0 backdrop-blur-md bg-obsidian-bg/90 z-10">
+          <div className="flex items-center space-x-3">
+            {/* Hamburger Button for Mobile/Tablet */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="lg:hidden p-2 rounded-sharp border border-obsidian-border bg-obsidian-card text-slate-300 hover:text-white hover:border-royal-500 touch-target flex items-center justify-center"
+              aria-label="Open Mobile Menu"
+            >
+              <Menu size={18} />
+            </button>
+
+            {/* Command Palette Trigger Input */}
+            <div
+              onClick={() => setShowPalette(true)}
+              className="flex items-center space-x-2.5 px-3 py-1.5 rounded-sharp bg-obsidian-card border border-obsidian-border text-xs text-slate-400 cursor-pointer w-44 sm:w-72 hover:border-royal-500 transition-all font-mono"
+            >
+              <Search size={14} className="text-slate-400 shrink-0" />
+              <span className="truncate">Search (Ctrl+K)...</span>
+            </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <button
               onClick={toggleTheme}
               className="p-2 rounded-sharp border border-obsidian-border bg-obsidian-card text-slate-300 hover:text-white hover:border-royal-500 transition-all"
@@ -276,9 +364,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               </button>
             </div>
 
-            <div className="h-5 w-[1px] bg-obsidian-border"></div>
+            <div className="hidden sm:block h-5 w-[1px] bg-obsidian-border"></div>
 
-            <span className="text-[11px] font-mono font-bold text-emerald-400 flex items-center space-x-1.5">
+            <span className="hidden md:flex text-[11px] font-mono font-bold text-emerald-400 items-center space-x-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-status animate-ping"></span>
               <span>Clean Data Suite v2.0</span>
             </span>
@@ -286,7 +374,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </header>
 
         {/* Content Render Outlet */}
-        <main className="flex-1 p-8 overflow-y-auto relative z-0">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto relative z-0">
           {children}
         </main>
       </div>

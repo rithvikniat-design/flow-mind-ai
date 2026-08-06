@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Terminal, Shield, Zap, Sparkles, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowRight, Terminal, Shield, Zap, Sparkles, Check, ChevronDown, ChevronUp, Menu, X } from 'lucide-react';
 
 export const Landing: React.FC = () => {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   const faqs = [
     {
@@ -33,32 +34,60 @@ export const Landing: React.FC = () => {
       </div>
 
       {/* Navigation */}
-      <header className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between border-b border-slate-900/80 sticky top-0 backdrop-blur-md bg-dark-950/75 z-50">
+      <header className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between border-b border-slate-900/80 sticky top-0 backdrop-blur-md bg-dark-950/75 z-50">
         <div className="flex items-center space-x-3">
           <span className="text-2xl">🧠</span>
-          <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+          <span className="font-bold text-base sm:text-lg tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
             FlowMind AI
           </span>
         </div>
+
         <nav className="hidden md:flex items-center space-x-8 text-xs font-semibold text-slate-400">
           <a href="#features" className="hover:text-slate-200 transition-colors">Features</a>
           <a href="#workflow" className="hover:text-slate-200 transition-colors">How It Works</a>
           <a href="#pricing" className="hover:text-slate-200 transition-colors">Pricing</a>
           <a href="#faq" className="hover:text-slate-200 transition-colors">FAQ</a>
         </nav>
-        <div className="flex items-center space-x-4">
-          <Link to="/login" className="text-xs font-semibold text-slate-400 hover:text-white transition-colors">
+
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          <Link to="/login" className="hidden sm:block text-xs font-semibold text-slate-400 hover:text-white transition-colors">
             Sign In
           </Link>
           <Link
             to="/signup"
-            className="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-xs font-semibold text-white shadow-lg shadow-brand-500/20 flex items-center space-x-1 transition-all"
+            className="px-3.5 sm:px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-xs font-semibold text-white shadow-lg shadow-brand-500/20 flex items-center space-x-1 transition-all touch-target"
           >
             <span>Deploy Workforce</span>
             <ArrowRight size={12} />
           </Link>
+
+          {/* Mobile Hamburger Button */}
+          <button
+            onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
+            className="md:hidden p-2 text-slate-400 hover:text-white rounded-lg border border-slate-800 touch-target"
+            aria-label="Toggle Mobile Menu"
+          >
+            {isMobileNavOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
       </header>
+
+      {/* Mobile Navigation Drawer */}
+      {isMobileNavOpen && (
+        <div className="md:hidden fixed inset-x-0 top-20 bg-dark-950/95 border-b border-slate-900 backdrop-blur-md p-6 space-y-4 z-40">
+          <nav className="flex flex-col space-y-3 text-sm font-semibold text-slate-300">
+            <a href="#features" onClick={() => setIsMobileNavOpen(false)} className="hover:text-brand-400 transition-colors py-1">Features</a>
+            <a href="#workflow" onClick={() => setIsMobileNavOpen(false)} className="hover:text-brand-400 transition-colors py-1">How It Works</a>
+            <a href="#pricing" onClick={() => setIsMobileNavOpen(false)} className="hover:text-brand-400 transition-colors py-1">Pricing</a>
+            <a href="#faq" onClick={() => setIsMobileNavOpen(false)} className="hover:text-brand-400 transition-colors py-1">FAQ</a>
+          </nav>
+          <div className="pt-3 border-t border-slate-900 flex flex-col space-y-2">
+            <Link to="/login" onClick={() => setIsMobileNavOpen(false)} className="text-center py-2 text-xs font-semibold text-slate-400 hover:text-white">
+              Sign In
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="max-w-6xl mx-auto px-6 pt-20 pb-28 text-center relative z-10">

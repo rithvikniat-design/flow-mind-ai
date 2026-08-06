@@ -335,11 +335,11 @@ export const Workspace: React.FC = () => {
             </button>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-            
+          {/* Bottom toolbar */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
             {/* File upload trigger */}
-            <div className="flex items-center space-x-3">
-              <label className="px-3.5 py-1.5 rounded-sharp border border-obsidian-border hover:border-royal-500 bg-obsidian-bg text-[11px] font-semibold text-slate-300 hover:text-white cursor-pointer flex items-center space-x-2 transition-all">
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="px-3.5 py-2 rounded-sharp border border-obsidian-border hover:border-royal-500 bg-obsidian-bg text-[11px] font-semibold text-slate-300 hover:text-white cursor-pointer flex items-center space-x-2 transition-all touch-target">
                 <Upload size={13} className="text-royal-400" />
                 <span>{uploading ? 'Processing File...' : 'Attach Context File'}</span>
                 <input
@@ -353,7 +353,7 @@ export const Workspace: React.FC = () => {
               
               <Link
                 to="/kb"
-                className="text-[10px] text-slate-400 hover:text-royal-400 flex items-center space-x-1 font-mono"
+                className="text-[10px] text-slate-400 hover:text-royal-400 flex items-center space-x-1 font-mono py-1"
               >
                 <FolderOpen size={11} />
                 <span>Manage Knowledge Store</span>
@@ -363,7 +363,7 @@ export const Workspace: React.FC = () => {
             {/* Submit button */}
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-sharp bg-royal-500 hover:bg-royal-600 text-xs font-bold text-white shadow-lg shadow-royal-500/20 flex items-center space-x-2 transition-all"
+              className="w-full sm:w-auto px-6 py-2.5 rounded-sharp bg-royal-500 hover:bg-royal-600 text-xs font-bold text-white shadow-lg shadow-royal-500/20 flex items-center justify-center space-x-2 transition-all touch-target"
             >
               <span>Dispatch Workforce</span>
               <ArrowRight size={14} />

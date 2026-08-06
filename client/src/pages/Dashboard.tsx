@@ -144,16 +144,16 @@ export const Dashboard: React.FC = () => {
                     <div
                       key={project.id}
                       onClick={() => navigate(isRunning ? '/collaboration' : `/reports?projectId=${project.id}`)}
-                      className="py-3.5 flex items-center justify-between hover:bg-obsidian-hover px-3 rounded-sharp cursor-pointer transition-all"
+                      className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-obsidian-hover px-3 rounded-sharp cursor-pointer transition-all gap-2"
                     >
-                      <div className="space-y-1 pr-4">
-                        <h4 className="text-xs font-bold text-white flex items-center space-x-2">
+                      <div className="space-y-1 pr-2 min-w-0">
+                        <h4 className="text-xs font-bold text-white flex items-center space-x-2 truncate">
                           <span>{project.name}</span>
                         </h4>
-                        <p className="text-[11px] text-slate-400 truncate max-w-sm font-sans">{project.description}</p>
+                        <p className="text-[11px] text-slate-400 truncate font-sans">{project.description}</p>
                       </div>
                       
-                      <div className="flex items-center space-x-4">
+                      <div className="flex items-center justify-between sm:justify-end space-x-3 shrink-0">
                         <span className={`px-2 py-0.5 rounded-sharp text-[9px] font-mono font-bold ${
                           project.status === 'completed' ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400' :
                           project.status === 'executing' ? 'bg-royal-500/10 border border-royal-500/30 text-royal-400 animate-pulse' :
