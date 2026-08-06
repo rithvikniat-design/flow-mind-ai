@@ -8,7 +8,7 @@
     "build:server": "npm run build --prefix server",
     "build:client": "npm run build --prefix client",
     "build": "npm run build:server && npm run build:client",
-    "postinstall": "npm install --prefix server && npm install --prefix client",
+    "postinstall": "npm install --prefix server --include=dev && npm install --prefix client --include=dev",
     "start": "node server/dist/index.js",
     "start:server": "npm start --prefix server",
     "start:client": "npm run preview --prefix client"
