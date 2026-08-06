@@ -23,6 +23,23 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Response interceptor to catch HTML responses (when /api is proxied to index.html)
+api.interceptors.response.use(
+  (response) => {
+    if (typeof response.data === 'string' && response.data.trim().toLowerCase().startsWith('<!doctype')) {
+      return Promise.reject({
+        response: {
+          data: {
+            error: 'Backend API URL not connected. Please add VITE_API_URL in Vercel Environment Variables pointing to your Render backend (e.g. https://your-backend.onrender.com/api).'
+          }
+        }
+      });
+    }
+    return response;
+  },
+  (error) => Promise.reject(error)
+);
+
 // Auth Service Endpoints
 export const authService = {
   login: async (credentials: any) => {
