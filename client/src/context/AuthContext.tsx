@@ -23,33 +23,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   });
   const [token, setToken] = useState<string | null>(localStorage.getItem('flowmind_token'));
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchProfile = async () => {
-      if (token) {
+      if (token && !user) {
+        setLoading(true);
         try {
-          const data = await authService.me();
-          setUser(data.user);
-          localStorage.setItem('flowmind_user', JSON.stringify(data.user));
+          // 5-second timeout safeguard for network requests
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Profile request timeout')), 5000)
+          );
+          const data: any = await Promise.race([authService.me(), timeoutPromise]);
+          if (isMounted && data?.user) {
+            setUser(data.user);
+            localStorage.setItem('flowmind_user', JSON.stringify(data.user));
+          }
         } catch (err) {
-          console.warn('Expired token, logging out.');
-          logout();
+          console.warn('Unable to verify profile token:', err);
+          if (isMounted) logout();
+        } finally {
+          if (isMounted) setLoading(false);
         }
       }
-      setLoading(false);
     };
     fetchProfile();
+    return () => { isMounted = false; };
   }, [token]);
 
   const login = async (credentials: any) => {
     setLoading(true);
     try {
       const data = await authService.login(credentials);
-      localStorage.setItem('flowmind_token', data.token);
-      localStorage.setItem('flowmind_user', JSON.stringify(data.user));
-      setToken(data.token);
-      setUser(data.user);
+      if (data?.token && data?.user) {
+        localStorage.setItem('flowmind_token', data.token);
+        localStorage.setItem('flowmind_user', JSON.stringify(data.user));
+        setToken(data.token);
+        setUser(data.user);
+      } else {
+        throw new Error('Invalid authentication response from server.');
+      }
     } finally {
       setLoading(false);
     }
@@ -59,10 +73,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       const data = await authService.signup(details);
-      localStorage.setItem('flowmind_token', data.token);
-      localStorage.setItem('flowmind_user', JSON.stringify(data.user));
-      setToken(data.token);
-      setUser(data.user);
+      if (data?.token && data?.user) {
+        localStorage.setItem('flowmind_token', data.token);
+        localStorage.setItem('flowmind_user', JSON.stringify(data.user));
+        setToken(data.token);
+        setUser(data.user);
+      } else {
+        throw new Error('Invalid registration response from server.');
+      }
     } finally {
       setLoading(false);
     }
@@ -73,6 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('flowmind_user');
     setToken(null);
     setUser(null);
+    setLoading(false);
   };
 
   return (

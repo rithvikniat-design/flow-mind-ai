@@ -26,12 +26,14 @@ export const Dashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         const projData = await projectService.getAll();
-        setProjects(projData);
+        setProjects(Array.isArray(projData) ? projData : []);
 
         const agentData = await agentService.getAll();
-        setAgents(agentData);
+        setAgents(Array.isArray(agentData) ? agentData : []);
       } catch (err) {
         console.error('Failed to load dashboard metrics', err);
+        setProjects([]);
+        setAgents([]);
       } finally {
         setLoading(false);
       }
