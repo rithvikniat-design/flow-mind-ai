@@ -65,10 +65,11 @@ if (fs.existsSync(clientBuildPath)) {
 app.use(errorHandler);
 
 // Start Server
-app.listen(config.PORT, () => {
+const port = Number(config.PORT) || 5000;
+app.listen(port, '0.0.0.0', () => {
   console.log(`=========================================`);
   console.log(` FlowMind AI API Server Running`);
-  console.log(` Port: ${config.PORT}`);
+  console.log(` Port: ${port}`);
   console.log(` Mode: ${config.IS_SUPABASE_CONFIGURED ? 'Supabase DB' : 'Local Persistent JSON'}`);
   console.log(` Grok: ${config.IS_GROK_CONFIGURED ? 'Connected' : 'Offline Simulation'}`);
   console.log(`=========================================`);
