@@ -2,13 +2,15 @@
   "name": "flowmind-ai-root",
   "version": "1.0.0",
   "description": "FlowMind AI - Root Workspace Orchestrator",
+  "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
     "dev": "npx --yes concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "build:server": "npm run build --prefix server",
     "build:client": "npm run build --prefix client",
     "build": "npm run build:server && npm run build:client",
-    "postinstall": "npm install --prefix server --include=dev && npm install --prefix client --include=dev",
+    "postinstall": "node -e \"const { execSync } = require('child_process'); execSync('npm install --prefix server --include=dev && npm install --prefix client --include=dev', { stdio: 'inherit' });\"",
+    "npm": "npm",
     "start": "node server/dist/index.js",
     "start:server": "npm start --prefix server",
     "start:client": "npm run preview --prefix client"
