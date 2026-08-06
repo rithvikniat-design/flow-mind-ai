@@ -29,15 +29,15 @@ export const Signup: React.FC = () => {
       await signup({ name, email, password });
       navigate('/dashboard');
     } catch (err: any) {
-      let errMsg = err.response?.data?.error;
-      if (!errMsg && typeof err.response?.data === 'string') {
-        if (err.response.data.trim().toLowerCase().startsWith('<!doctype')) {
-          errMsg = 'Backend API URL not connected on Vercel. Please add VITE_API_URL in Vercel Environment Variables.';
+      let errMsg = err.response?.data?.error || err.message;
+      if (!errMsg || errMsg === 'Registration failed.' || typeof err.response?.data === 'string') {
+        if (typeof err.response?.data === 'string' && err.response.data.trim().toLowerCase().startsWith('<!doctype')) {
+          errMsg = 'Backend API URL not connected on Vercel. Please set VITE_API_URL in Vercel Environment Variables to your Render backend URL (e.g. https://your-app.onrender.com/api).';
         } else {
-          errMsg = err.response.data;
+          errMsg = err.response?.data || err.message || 'Registration failed.';
         }
       }
-      setError(errMsg || err.message || 'Registration failed. Name must be at least 2 characters long.');
+      setError(errMsg);
     } finally {
       setLoading(false);
     }

@@ -43,16 +43,37 @@ api.interceptors.response.use(
 // Auth Service Endpoints
 export const authService = {
   login: async (credentials: any) => {
-    const res = await api.post('/auth/login', credentials);
-    return res.data;
+    try {
+      const res = await api.post('/auth/login', credentials);
+      return res.data;
+    } catch (err: any) {
+      if (err.code === 'ERR_NETWORK' || !err.response) {
+        throw new Error('Backend server is unreachable. Please ensure your Render web service is live and VITE_API_URL is set in Vercel Environment Variables.');
+      }
+      throw err;
+    }
   },
   signup: async (details: any) => {
-    const res = await api.post('/auth/signup', details);
-    return res.data;
+    try {
+      const res = await api.post('/auth/signup', details);
+      return res.data;
+    } catch (err: any) {
+      if (err.code === 'ERR_NETWORK' || !err.response) {
+        throw new Error('Backend server is unreachable. Please ensure your Render web service is live and VITE_API_URL is set in Vercel Environment Variables.');
+      }
+      throw err;
+    }
   },
   me: async () => {
-    const res = await api.get('/auth/me');
-    return res.data;
+    try {
+      const res = await api.get('/auth/me');
+      return res.data;
+    } catch (err: any) {
+      if (err.code === 'ERR_NETWORK' || !err.response) {
+        throw new Error('Backend server is unreachable.');
+      }
+      throw err;
+    }
   },
 };
 
