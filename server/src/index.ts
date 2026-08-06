@@ -46,6 +46,21 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Serve Client Static Assets (Production SPA fallback)
+import path from 'path';
+import fs from 'fs';
+
+const clientBuildPath = path.join(__dirname, '../../client/dist');
+if (fs.existsSync(clientBuildPath)) {
+  app.use(express.static(clientBuildPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path === '/health') {
+      return next();
+    }
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+}
+
 // Global Error Handler
 app.use(errorHandler);
 

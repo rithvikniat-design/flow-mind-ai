@@ -6,6 +6,9 @@
     "dev": "npx --yes concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "build:server": "npm run build --prefix server",
     "build:client": "npm run build --prefix client",
-    "build": "npm run build:server && npm run build:client"
+    "build": "npm run build:server && npm run build:client",
+    "start": "npm start --prefix server",
+    "start:server": "npm start --prefix server",
+    "start:client": "npm run preview --prefix client"
   }
 }
