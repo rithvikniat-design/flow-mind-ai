@@ -23,7 +23,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor to catch HTML responses (when /api is proxied to index.html)
+// Response interceptor to catch HTML responses (when /api is proxied to index.html) and auth errors
 api.interceptors.response.use(
   (response) => {
     if (typeof response.data === 'string' && response.data.trim().toLowerCase().startsWith('<!doctype')) {
@@ -37,7 +37,13 @@ api.interceptors.response.use(
     }
     return response;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      // Token is invalid or expired, dispatch custom event to trigger React logout
+      window.dispatchEvent(new Event('auth:logout'));
+    }
+    return Promise.reject(error);
+  }
 );
 
 // Auth Service Endpoints

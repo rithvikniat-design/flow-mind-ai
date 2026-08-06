@@ -49,7 +49,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     };
     fetchProfile();
-    return () => { isMounted = false; };
+
+    // Listen for auth:logout events triggered by API interceptors
+    const handleLogoutEvent = () => logout();
+    window.addEventListener('auth:logout', handleLogoutEvent);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('auth:logout', handleLogoutEvent);
+    };
   }, [token]);
 
   const login = async (credentials: any) => {

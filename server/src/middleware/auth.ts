@@ -38,11 +38,21 @@ export const authenticateToken = async (
         .eq('id', decoded.id)
         .single();
 
-      if (error || !user) {
-        return res.status(403).json({ error: 'Invalid or expired token' });
+      if (!error && user) {
+        req.user = user;
+      } else {
+        // Fallback to local db if supabase fails or user not found there
+        const localUser = db.getUsers().find(u => u.id === decoded.id);
+        if (!localUser) {
+          return res.status(403).json({ error: 'Invalid or expired token' });
+        }
+        req.user = {
+          id: localUser.id,
+          email: localUser.email,
+          name: localUser.name,
+          role: localUser.role,
+        };
       }
-
-      req.user = user;
     } else {
       const user = db.getUsers().find(u => u.id === decoded.id);
       if (!user) {
